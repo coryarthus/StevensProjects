@@ -8,7 +8,7 @@ import openai
 # Load dataset
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv"
+    url = "https://raw.githubusercontent.com/malcolmosh/goodbooks-10k-extended/master/books_enriched.csv"
     df = pd.read_csv(url)
     df = df[['title', 'authors', 'description']].dropna()
     return df
