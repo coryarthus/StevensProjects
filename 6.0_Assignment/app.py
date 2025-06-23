@@ -4,7 +4,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
-import openai
+from openai import OpenAI
 
 # Load dataset
 @st.cache_data
