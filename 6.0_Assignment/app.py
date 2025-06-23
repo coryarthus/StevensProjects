@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 from sentence_transformers import SentenceTransformer
@@ -31,11 +30,8 @@ def search_books(query, embeddings, df, k=5):
     return df.iloc[I[0]]
 
 # Generate GPT response
-def generate_gpt_response(books):
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-    book_info = "\n".join([f"Title: {row['title']}, Author: {row['authors']}, Description: {row['description']}" for _, row in books.iterrows()])
-    prompt = f"Based on the following book information, provide a friendly recommendation summary:\n\n{book_info}"
-    client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+def generate_gpt_response(prompt):
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
