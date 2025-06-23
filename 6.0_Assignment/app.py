@@ -32,7 +32,6 @@ def search_books(query, embeddings, df, k=5):
 
 # Generate GPT response
 def generate_gpt_response(prompt):
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
