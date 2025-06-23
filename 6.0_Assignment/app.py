@@ -40,7 +40,7 @@ def generate_gpt_response(prompt):
             {"role": "user", "content": prompt}
         ]
     )
-    return response.choices[0].message['content']
+    return response.choices[0].message.content
 
 # Streamlit UI
 def main():
