@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 from sentence_transformers import SentenceTransformer
@@ -29,6 +30,18 @@ def search_books(query, embeddings, df, k=5):
     D, I = index.search(query_vec, k)
     return df.iloc[I[0]]
 
+# Generate GPT response
+def generate_gpt_response(books):
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    book_info = "\n".join([f"Title: {row['title']}, Author: {row['authors']}, Description: {row['description']}" for _, row in books.iterrows()])
+    prompt = f"Based on the following book information, provide a friendly recommendation summary:\n\n{book_info}"
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
+
 # Streamlit UI
 def main():
     st.title("📚 Book Recommendation Chatbot")
@@ -45,6 +58,10 @@ def main():
             st.markdown(f"**{row['title']}** by *{row['authors']}*")
             st.write(row['description'])
             st.markdown("---")
+        
+        gpt_response = generate_gpt_response(results)
+        st.subheader("GPT Recommendation Summary:")
+        st.write(gpt_response)
 
 if __name__ == "__main__":
     main()
