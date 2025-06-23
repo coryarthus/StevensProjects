@@ -35,10 +35,12 @@ def generate_gpt_response(books):
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     book_info = "\n".join([f"Title: {row['title']}, Author: {row['authors']}, Description: {row['description']}" for _, row in books.iterrows()])
     prompt = f"Based on the following book information, provide a friendly recommendation summary:\n\n{book_info}"
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful book recommendation assistant."},
+            {"role": "user", "content": prompt}
+        ]
     )
     return response.choices[0].text.strip()
 
