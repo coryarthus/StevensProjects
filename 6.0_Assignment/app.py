@@ -1,9 +1,10 @@
+
 import streamlit as st
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
-from openai import OpenAI
+import openai
 
 # Load dataset
 @st.cache_data
@@ -31,15 +32,15 @@ def search_books(query, embeddings, df, k=5):
 
 # Generate GPT response
 def generate_gpt_response(prompt):
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-    response = client.chat.completions.create(
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful book recommendation assistant."},
             {"role": "user", "content": prompt}
         ]
     )
-    return response.choices[0].message.content
+    return response.choices[0].message['content']
 
 # Streamlit UI
 def main():
@@ -53,13 +54,10 @@ def main():
     if query:
         results = search_books(query, embeddings, df)
         st.subheader("Top Recommendations:")
+        prompt = "Here are some book recommendations based on your query:\n"
         for _, row in results.iterrows():
-            st.markdown(f"**{row['title']}** by *{row['authors']}*")
-            st.write(row['description'])
-            st.markdown("---")
-        
-        gpt_response = generate_gpt_response(results)
-        st.subheader("GPT Recommendation Summary:")
+            prompt += f"**{row['title']}** by *{row['authors']}*\n{row['description']}\n\n"
+        gpt_response = generate_gpt_response(prompt)
         st.write(gpt_response)
 
 if __name__ == "__main__":
