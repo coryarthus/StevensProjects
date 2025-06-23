@@ -1,8 +1,6 @@
-
 streamlit
 pandas
 sentence-transformers
 faiss-cpu
-openai
-numpy
 openai>=1.0.0
+numpy

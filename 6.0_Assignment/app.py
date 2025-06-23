@@ -4,7 +4,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
-import openai
+from openai import OpenAI
 
 # Load dataset
 @st.cache_data
@@ -35,14 +35,15 @@ def generate_gpt_response(books):
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     book_info = "\n".join([f"Title: {row['title']}, Author: {row['authors']}, Description: {row['description']}" for _, row in books.iterrows()])
     prompt = f"Based on the following book information, provide a friendly recommendation summary:\n\n{book_info}"
-    response = openai.ChatCompletion.create(
+    client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful book recommendation assistant."},
             {"role": "user", "content": prompt}
         ]
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message.content
 
 # Streamlit UI
 def main():
